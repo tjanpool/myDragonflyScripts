@@ -49,41 +49,10 @@ def clipboardPaste(n):
     # Restored the old clipboard
     clipBoardInstance.copy_to_system()
 
-def sayFromClipboard(n):
-    print "test"
-    print "-"+clip.clipboardArray[n]
-
-    toMimic = ["say"]
-    print toMimic
-    text = formatStringToWords(clip.clipboardArray[n])
-    print text
-    toMimic.extend(text)
-    print toMimic
-    test = Mimic()
-    test._words = tuple(toMimic)
-    print test._words
-    test.execute()
-
-    print "End test"
-
-
-def formatStringToWords(str):
-    modifyStr = str.replace(",", r" ,\comma");
-    modifyStr = str.replace(".", r" .\dot");
-    modifyStr = str.replace("!", r" !\exclamation-mark");
-    modifyStr = str.replace("?", r" !\question-mark");
-    print modifyStr
-    return re.sub(r'[^., \t\w]*', '', modifyStr).split()
-    #return re.sub("[^\w]", " ",  modifyStr).split()
-
-
-
 class extraClipboardMappingRule(MappingRule):
     mapping = {
         "copy [to [clipboard]] <n>" : Function(clipboardCopy),
         "past [from [clipboard]] <n>" : Function(clipboardPaste),
-        "say from Clipboard <n>" : Function(sayFromClipboard)
-
     }
     extras = [
             Integer("n", 0, 9)
@@ -93,6 +62,7 @@ class extraClipboardMappingRule(MappingRule):
 clipping_rule = extraClipboardMappingRule()
 grammar.add_rule(clipping_rule)
 grammar.load()
+
 # Unload function which will be called by natlink at unload time.
 def unload():
     global grammar
