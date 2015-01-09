@@ -5,16 +5,16 @@ grammar = Grammar("clipboardGrammer")
 
 class ClipWrap():
     initArray = [
-        "empty zero",
-        "empty one",
-        "empty two",
-        "empty three",
-        "empty four",
-        "empty five",
-        "empty six",
-        "empty seven",
-        "empty eight",
-        "empty nine"
+        u"empty zero",
+        u"empty one",
+        u"empty two",
+        u"empty three",
+        u"empty four",
+        u"empty five",
+        u"empty six",
+        u"empty seven",
+        u"empty eight",
+        u"empty nine"
         ]
 
     clipboardArray = initArray
