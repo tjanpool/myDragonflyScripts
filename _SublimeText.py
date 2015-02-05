@@ -44,7 +44,9 @@ class SublimeMappingRule(MappingRule):
         "mark [<n>] (words | word) right [<n>]" : Key("shift:down, c-right:%(n)d, shift:up"),
 
         "go to line" : Key("c-g"),
-        "go to line <n>" : Key("c-g") + Text("%(n)d") + Key("enter")
+        "go to line <n>" : Key("c-g") + Text("%(n)d") + Key("enter"),
+
+        "insert text <text>" : Key(space) + Text("%(text)s")
     }
     extras=[
             Integer("n", 1, 1000),
