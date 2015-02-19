@@ -33,7 +33,7 @@ class SublimeMappingRule(MappingRule):
         "go to line" : Key("c-g"),
         "go to line <n>" : Key("c-g") + Text("%(n)d") + Key("enter"),
 
-        "[insert] text space <text>" : Key("space") + Text("%(text)s"),
+        "space <text>" : Key("space") + Text("%(text)s"),
         "[insert] text <text>" : Text("%(text)s"),
         
     }
