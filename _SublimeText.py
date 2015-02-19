@@ -11,16 +11,9 @@ grammar = Grammar("Sublime", context=sublime_context)
 # file gets deleted if you say dictate. If this is the case then please raise the number in time.sleep(...).
 # When Dragon calls its dictation box, then it fires first ctrl C but will copy the entire line in sublime text.
 # Because I want to start without selected text. I select all text and deleted.
-def dictate():
-    Mimic("show","dictation","box").execute()
-    time.sleep(2)
-    Key("c-a, delete").execute()
-
 
 class SublimeMappingRule(MappingRule):
     mapping={
-        "dictate": Function(dictate),
-
         #sublime actions
         "save (file | document)" : Key("c-s"),
         "build (file | document)" : Key("c-b"),
@@ -46,7 +39,8 @@ class SublimeMappingRule(MappingRule):
         "go to line" : Key("c-g"),
         "go to line <n>" : Key("c-g") + Text("%(n)d") + Key("enter"),
 
-        "insert text <text>" : Key(space) + Text("%(text)s")
+        "insert text <text>" : Key("space") + Text("%(text)s")
+        
     }
     extras=[
             Integer("n", 1, 1000),
