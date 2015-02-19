@@ -6,12 +6,6 @@ import time
 sublime_context = AppContext(title="sublime")
 grammar = Grammar("Sublime", context=sublime_context)
 
-
-# At the moment to sleep time is two seconds, if this is not enough, then there is a big chance the content of your
-# file gets deleted if you say dictate. If this is the case then please raise the number in time.sleep(...).
-# When Dragon calls its dictation box, then it fires first ctrl C but will copy the entire line in sublime text.
-# Because I want to start without selected text. I select all text and deleted.
-
 class SublimeMappingRule(MappingRule):
     mapping={
         #sublime actions
@@ -39,7 +33,8 @@ class SublimeMappingRule(MappingRule):
         "go to line" : Key("c-g"),
         "go to line <n>" : Key("c-g") + Text("%(n)d") + Key("enter"),
 
-        "insert text <text>" : Key("space") + Text("%(text)s")
+        "[insert] text space <text>" : Key("space") + Text("%(text)s"),
+        "[insert] text <text>" : Text("%(text)s"),
         
     }
     extras=[
