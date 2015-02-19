@@ -1,8 +1,14 @@
 from dragonfly import (Grammar, AppContext, MappingRule,
                        Key, Mimic, Integer, Function)
+import time
 
 grammar = Grammar("dragon")
 
+
+# At the moment to sleep time is two seconds, if this is not enough, then there is a big chance the content of your
+# file gets deleted if you say dictate. If this is the case then please raise the number in time.sleep(...).
+# When Dragon calls its dictation box, then it fires first ctrl C but will copy the entire line in sublime text.
+# Because I want to start without selected text. I select all text and deleted.
 def dictate():
     Mimic("show","dictation","box").execute()
     time.sleep(2)
