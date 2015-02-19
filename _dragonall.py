@@ -3,11 +3,17 @@ from dragonfly import (Grammar, AppContext, MappingRule,
 
 grammar = Grammar("dragon")
 
+def dictate():
+    Mimic("show","dictation","box").execute()
+    time.sleep(2)
+    Key("c-a, delete").execute()
+
 class dragonMappingRule(MappingRule):
     mapping = {
         "slap [<n>] [times]" : Key("enter:%(n)d"),
-		"snore" : Key("npdiv"),
+		    "snore" : Key("npdiv"),
         "I am one with my computer" : Mimic( "say", "I", "am", "the", "terminator" ),
+        "dictate": Function(dictate),
 	}
     extras = [
             Integer("n", 1, 1000)
