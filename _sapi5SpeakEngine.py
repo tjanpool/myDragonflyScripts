@@ -30,7 +30,7 @@ class SubprocessController():
 				 ],
 				shell=True,
 
-				cwd=r'C:\\NatLink\\NatLink\\MacroSystem',
+				cwd=r'C:\\NatLink\\NatLink\\MacroSystem\\Tools',
 				stdout=subprocess.PIPE, # a pipe didn't receive a thing. this is blocked.
 				stderr=subprocess.PIPE, # a pipe didn't receive a thing. this is blocked.
 				#stderr=subprocess.PIPE, # thats way we are going to use a named pipe to communicate

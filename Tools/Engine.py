@@ -10,7 +10,7 @@ from collections import deque
 import os
 from Queue import Empty
 
-settingsFileName = r'c:\natlink\natlink\macrosystem\sapispeakersettings.json'
+settingsFileName = r'c:\natlink\natlink\macrosystem\Tools\sapispeakersettings.json'
 
 # The important thing here is just the run method, The class is just there to
 # physilogical keep me happy by saying:
