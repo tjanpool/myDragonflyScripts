@@ -19,7 +19,7 @@ class Example(Frame):
         Frame.__init__(self, parent)   
         self.counter = 0
         self.parent = parent
-        self.parent.title("Windows")
+        self.parent.title("Mimic Commands Windows")
         self.style = Style()
         self.style.theme_use("default")
         self.pack(fill=BOTH, expand=1)
