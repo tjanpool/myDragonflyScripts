@@ -9,8 +9,6 @@ import re
 from collections import deque 
 import os
 from Queue import Empty
-from Tkinter import Tk, Text, E, N,S, W, BOTH, StringVar, IntVar, Listbox, VERTICAL
-from ttk import Frame, Button, Label, Style, Entry, Checkbutton, OptionMenu, Scrollbar
 
 settingsFileName = r'c:\natlink\natlink\macrosystem\Tools\sapispeakersettings.json'
 
@@ -49,12 +47,8 @@ class CommunicationProtocal():
 
         self._inputQueue = multiprocessing.Queue()     
         self.recoveryTask = "recoverNextVoice"
-        
-        self.gui = EngineGui(self)
         self.initAPI()
-        self.gui.StartGui()
-        
-        
+
        
     def initAPI(self):
         self.Output("initAPI")
@@ -69,16 +63,14 @@ class CommunicationProtocal():
         self._needRecovering = False
         self._wordsStartOfFirst = None
         self._speakQueue = deque()
-        self.inputHandleThread = threading.Thread(target=self.InputLoop, args=(self.gui,))
-        self.inputHandleThread.deamon = True
+        self.inputHandleThread = threading.Thread(target=self.InputLoop)
         self.inputHandleThread.start()
-
 
     def Output(self, text):
         sys.stdout.write(text + '\n')
         sys.stdout.flush()
 
-    def InputLoop(self, gui):
+    def InputLoop(self):
         self.loop = True
         while (self.loop):
             try:
@@ -108,20 +100,14 @@ class CommunicationProtocal():
                     self.handlePauze()
                 elif (inp[:len("resume")] == "resume"):
                     self.handleResume()
-                elif (inp[:len("show gui")] == "show gui"):
-                    # gui.ShowGui()
-                elif (inp[:len("hide gui")] == "hide gui"):
-                    # gui.HideGui()
                 elif (inp[:4] == "quit"): # exit
                     self.loop = False
                     self.TerminateProcess()
                     print("-----exit func called")
-                    gui.Close()
                 else:
                     self.Output("err: not implementated or not recognized action: " + inp + ". didn't you forget to add something? please try again or type help for help or quit to terminate!")
             except Empty:
                 time.sleep(0.1)
-        print "end input thread"
 
     def handleSay(self, text):
         #self._say = True
@@ -154,9 +140,9 @@ class CommunicationProtocal():
 
     def handleSetVoice(self, voiceToSelect):
         self.Output("set voice action")
-        if (len(voiceToSelect) == 0):
-            self.Output("You should give something that at least looks like a voice")
-        else:
+    	if (len(voiceToSelect) == 0):
+    		self.Output("You should give something that at least looks like a voice")
+       	else:
             if (self._lastAction != None and not self._needRecovering):
                 self.restartEngine()
             
@@ -166,6 +152,7 @@ class CommunicationProtocal():
                 textToSay = self.obtainTextToSend()
                 self._speakQueue[0] = textToSay 
             self._infoForProcQ.put("setVoice " + voiceToSelect)
+
 
     def obtainTextToSend(self):
         return self._speakQueue[0][self._wordsStartOfFirst: len(self._speakQueue[0])]
@@ -208,8 +195,8 @@ class CommunicationProtocal():
         self._infoForProcQ = multiprocessing.Queue()
         self._infoForThisQ = multiprocessing.Queue()
         self._actualProcess = multiprocessing.Process(target=speakEngineProcess.Run, args=(self._infoForThisQ, self._infoForProcQ,))
-        self._actualProcess.deamon = True
         self._actualProcess.start()
+        self._actualProcess.deamon = True
      
         self.lisenThread = threading.Thread(target=self.listernerToSpeakProcess, args=(self._infoForThisQ,))
         self.lisenThread.daemon = True
@@ -227,7 +214,6 @@ class CommunicationProtocal():
                     fn = sys.stdin.fileno() 
                     inputReader = InputUserProcess()
                     self._inputProcess = multiprocessing.Process(target=inputReader.run, args=(self._inputQueue,fn))
-                    self._inputProcess.Deamon = True
                     self._inputProcess.start()
                 elif ('starting' in input):
                     self._wordsStartOfFirst = 0
@@ -288,114 +274,6 @@ class CommunicationProtocal():
                 self.Output("terminateProcess")           
                 self._infoForProcQ = None
                 self._infoForThisQ = None
-
-class EngineGui():
-    def __init__(self, communicationProtocal):
-        self.communicationProtocal = communicationProtocal
-
-    def StartGui(self):
-        self.tkRoot = Tk(baseName="")
-        self.tkRoot.geometry("350x255+0+0")
-        self.tkRoot.title("Mimic Commands Windows")
-
-        frame = Frame(self.tkRoot)
-        frame.style = Style()
-        frame.style.theme_use("alt")
-        frame.pack(fill=BOTH, expand=1)
-
-        frame.columnconfigure(1, weight=1)
-        frame.columnconfigure(7, pad=7)
-        frame.rowconfigure(12, weight=1)
-        frame.rowconfigure(12, pad=7)
-        
-        labelLabelStart = Label(frame, text="Start:")
-        labelLabelStart.grid(row = 0, column=0)
-        self.labelStart = Label(frame, text="0")
-        self.labelStart.grid(row = 1, column=0)
-
-        labelLabelLength = Label(frame, text="Length:")
-        labelLabelLength.grid(row = 0, column=1)
-        self.labelLength = Label(frame, text="0")
-        self.labelLength.grid(row = 1, column=1)
-
-        labelLabelTotal = Label(frame, text="Total:")
-        labelLabelTotal.grid(row = 0, column=2)
-        self.labelTotal = Label(frame, text="0")
-        self.labelTotal.grid(row = 1, column=2)
-        
-
-        self.labelStart = Label(frame, text="this is a")
-        self.labelStart.grid(row = 2, column=0, sticky=E)
-        self.labelStart = Label(frame, text="nice", foreground="red")
-        self.labelStart.grid(row = 2, column=1)
-        self.labelStart = Label(frame, text="test case I")
-        self.labelStart.grid(row = 2, column=2, sticky=W, columnspan=2)   
-
-        scrollbar = Scrollbar(frame, orient=VERTICAL)
-        self.labelQueueToSpeak = Label(frame, text="Queue to speak:")
-        self.labelQueueToSpeak.grid(row = 3, column=0, pady=4, padx=5, sticky=W)
-
-        self.listboxQueueToSpeak = Listbox(frame, width=50, height=3, yscrollcommand=scrollbar.set)
-        self.listboxQueueToSpeak.insert(1, "1: Python")
-        self.listboxQueueToSpeak.insert(2, "2: Perl")
-        self.listboxQueueToSpeak.insert(3, "3: C")
-        self.listboxQueueToSpeak.insert(4, "4: PHP")
-        self.listboxQueueToSpeak.insert(5, "5: JSP")
-        self.listboxQueueToSpeak.insert(6, "6: Ruby")
-        
-        scrollbar.config(command=self.listboxQueueToSpeak.yview)
-        self.listboxQueueToSpeak.grid( sticky=N+S+E+W, row = 4, column = 0, columnspan = 2 ,rowspan = 3, padx=3)
-        scrollbar.grid(sticky=N+S+W, row = 4, column = 2, rowspan = 3)
-
-        self.buttonExecute = Button(frame, text="Pauze")
-        self.buttonExecute.grid(row = 4, column=3)
-
-        self.buttonExecute = Button(frame, text="Stop")
-        self.buttonExecute.grid(row = 5, column=3)
-
-        self.buttonExecute = Button(frame, text="Resume")
-        self.buttonExecute.grid(row = 6, column=3)
-
-        self.labelToSpeak = Label(frame, text="text to say:")
-        self.labelToSpeak.grid(row = 7, column=0, padx=3, sticky=W)
-
-        self.stringVarMimicCommand = StringVar()
-        self.entryMimicCommand = Entry(frame, textvariable=self.stringVarMimicCommand, width=500)
-        self.entryMimicCommand.grid(row=8, column=0, columnspan=3, padx=3, sticky=W)
-        self.stringVarMimicCommand.set("hello SAPI Speak Engine")
-
-        self.buttonExecute = Button(frame, text="say")
-        self.buttonExecute.grid(row = 8, column=3)
-
-        self.buttonExecute = Button(frame, text="prev voice")
-        self.buttonExecute.grid(row = 10, column=0, padx=3, sticky=W)
-
-        self.buttonExecute = Button(frame, text="next voice")
-        self.buttonExecute.grid(row = 10, column=3)
-
-
-        self.labelToSpeak = Label(frame, text="voice:")
-        self.labelToSpeak.grid(row = 9, column=0, padx=3, sticky=W)
-
-        var = StringVar(self.tkRoot)
-        var.set("one") # initial value
-        optionMenuQueueToSpeak = OptionMenu(frame, var, "one", "two", "three", "four")
-        optionMenuQueueToSpeak.config(width=500)
-        optionMenuQueueToSpeak.grid(sticky=W, row = 10, column = 1)
-     
-        #hide if close button is clicked
-        self.tkRoot.protocol("WM_DELETE_WINDOW", self.HideGui)
-        self.tkRoot.mainloop()  
-
-    def Close(self):
-        self.tkRoot.quit()
-        
-
-    def HideGui(self):
-        self.tkRoot.withdraw()
-
-    def ShowGui(self):
-        self.tkRoot.deiconify()
 
 class SpeakEngineProcess():
     def Run(self, infoForMainAppQ, infoForProcessQ):

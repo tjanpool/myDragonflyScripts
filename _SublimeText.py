@@ -13,6 +13,7 @@ class SublimeMappingRule(MappingRule):
         "build (file | document)" : Key("c-b"),
         "go to (file | document)" : Key("c-p"),
         "go to (file | document) <text>" : Key("c-p") + Text("%(text)s"),
+        "close tab" : Key("c-w"),
 
         # navigation move up down left right with or without words
         "go [<n>] [(lines|line)] down [<n>]" : Key("down:%(n)d"), # laag so la
@@ -35,7 +36,7 @@ class SublimeMappingRule(MappingRule):
 
         "space <text>" : Key("space") + Text("%(text)s"),
         "[insert] text <text>" : Text("%(text)s"),
-        
+
     }
     extras=[
             Integer("n", 1, 1000),
@@ -50,17 +51,24 @@ class LatexEditingRule(MappingRule):
     mapping={
         "new (chapter | section)": Text("\section{}") + Key("left"),
         "new subsection": Text("\subsection{}") + Key("left"),
-        "(open | show) pdf" : Key("ctrl:down, l, o, ctrl:up")
+        "(open | show) pdf" : Key("ctrl:down, l, o, ctrl:up"),
     }
-    extras=[
-            Dictation("text"),
-           ]
 
 
+class PythonEditingRule(MappingRule):
+    mapping={
+        "run Python script": Key("a-t, s/10:2, right/10, p/10, right/10, up/10:2, enter")    
+    }
+
+
+        
 sublimeRule = SublimeMappingRule()
 grammar.add_rule(sublimeRule)
 latexRule = LatexEditingRule()
 grammar.add_rule(latexRule)
+pythonRule = PythonEditingRule()
+grammar.add_rule(pythonRule)
+
 
 grammar.load()
 def unload():

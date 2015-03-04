@@ -147,7 +147,6 @@ class Example(Frame):
 
     def formatStringToWords(self, str):
         modifyStr = str.replace(",", r" ,\comma")
-        modifyStr = modifyStr.lower()
         modifyStr = modifyStr .replace(".", r" .\dot")
         modifyStr = modifyStr .replace("!", r" !\exclamation-mark")
         modifyStr = modifyStr .replace("?", r" !\question-mark")
