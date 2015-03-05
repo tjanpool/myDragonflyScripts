@@ -118,7 +118,7 @@ class CommunicationProtocal():
         text = re.sub(r'[^., \t\w]*', '', text)
         if (text == ''):
             text = "recieved invalid text"
-        self.SpeakQueue.appendleft(text)
+        self.SpeakQueue.append(text)
         self.Output("handledSay")
         #self._say = False
         if self.OnWordStartLocation == None and self._lastAction == None:
@@ -152,7 +152,9 @@ class CommunicationProtocal():
                 self.restartEngine()
             
             self.recoveryTask = "recoverSetVoice"
-            self._lastAction = "introduce"
+            if (self.wordTotal == 0):
+                self._lastAction = "introduce"
+
             if (self.SpeakQueue):
                 textToSay = self.obtainTextToSend()
                 self.SpeakQueue[0] = textToSay 
@@ -275,7 +277,7 @@ class CommunicationProtocal():
                 elif('finished' in input):
                     self.OnWordLength = 0
                     if not self._lastAction == "introduce":
-                        self.SpeakQueue.pop()
+                        self.SpeakQueue.popleft()
 
                     if self.SpeakQueue:         # if SpeakQueue has items
                         self.OnWordStartLocation = 0
